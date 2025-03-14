@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luma AI Playground</title>
+    <!-- Add Prism CSS for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-okaidia.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" rel="stylesheet" />
+    <!-- Add Google Sign-In script -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <style>
+        :root {
+            --primary-color: #2196f3;
+            --primary-dark: #1976d2;
+            --bg-color: #f5f5f5;
+            --panel-bg: white;
+            --border-color: #ddd;
+            --text-color: #333;
+            --code-bg: #272822;
+            --header-bg: #343541;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+        
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+        
+        .settings-panel {
+            width: 300px;
+            background-color: var(--panel-bg);
+            border-right: 1px solid var(--border-color);
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .chat-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .auth-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+        }
+        
+        .user-name {
+            font-size: 14px;
+            color: var(--text-color);
+        }
+        
+        .logout-button {
+            padding: 8px 16px;
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .logout-button:hover {
+            background-color: #c82333;
+        }
+        
+        .chat-container {
+            background-color: var(--panel-bg);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        
+        .user-message {
+            background-color: #e3f2fd;
+            margin-left: 20%;
+        }
+        
+        .assistant-message {
+            background-color: #f5f5f5;
+            margin-right: 20%;
+        }
+        
+        .input-container {
+            display: flex;
+            gap: 10px;
+        }
+        
+        #user-input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        button:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .role {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .content {
+            white-space: pre-wrap;
+        }
+        
+        /* Code block styling */
+        pre {
+            background-color: var(--code-bg);
+            border-radius: 0 0 5px 5px;
+            margin: 0;
+            padding: 10px;
+            overflow-x: auto;
+            white-space: pre !important;
+            tab-size: 4;
+        }
+        
+        code {
+            font-family: 'Courier New', Courier, monospace;
+        }
+        
+        pre code {
+            white-space: pre !important;
+            display: block;
+            overflow-x: auto;
+            padding: 0.5em;
+            line-height: 1.5;
+        }
+        
+        .code-block {
+            position: relative;
+            margin: 15px 0;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            background-color: var(--header-bg);
+            color: white;
+            padding: 5px 10px;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            font-size: 12px;
+        }
+        
+        .copy-button {
+            background-color: transparent;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 0 5px;
+            font-size: 12px;
+        }
+        
+        .copy-button:hover {
+            text-decoration: underline;
+        }
+        
+        /* Markdown styling */
+        h1, h2, h3, h4, h5, h6 {
+            margin-top: 1em;
+            margin-bottom: 0.5em;
+            font-weight: bold;
+        }
+        
+        h1 { font-size: 1.8em; }
+        h2 { font-size: 1.5em; }
+        h3 { font-size: 1.3em; }
+        h4 { font-size: 1.2em; }
+        h5 { font-size: 1.1em; }
+        h6 { font-size: 1em; }
+        
+        /* Form styling */
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        input[type="text"], 
+        input[type="number"], 
+        select, 
+        textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .range-container {
+            display: flex;
+            align-items: center;
+        }
+        
+        .range-container input[type="range"] {
+            flex: 1;
+        }
+        
+        .range-value {
+            margin-left: 10px;
+            min-width: 30px;
+            text-align: center;
+        }
+        
+        .preset-container {
+            margin-bottom: 20px;
+        }
+        
+        .preset-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 5px;
+        }
+        
+        .preset-button {
+            padding: 5px 10px;
+            font-size: 12px;
+            background-color: #e0e0e0;
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+        }
+        
+        .preset-button:hover {
+            background-color: #d0d0d0;
+        }
+        
+        .preset-button.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                height: auto;
+            }
+            
+            .settings-panel {
+                width: auto;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+                max-height: 300px;
+            }
+            
+            .chat-panel {
+                height: calc(100vh - 300px);
+            }
+            
+            .user-message {
+                margin-left: 5%;
+            }
+            
+            .assistant-message {
+                margin-right: 5%;
+            }
+        }
+        
+        /* User interface styles */
+        .user-panel {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background-color: var(--panel-bg);
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+        }
+        
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        .user-name {
+            font-weight: bold;
+        }
+        
+        .chat-history-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 15px;
+            min-width: 250px;
+            margin-top: 10px;
+        }
+        
+        .chat-history-dropdown.show {
+            display: block;
+        }
+        
+        .chat-history-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .chat-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .chat-item {
+            padding: 8px;
+            margin-bottom: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .chat-item:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .chat-item.active {
+            background-color: #e3f2fd;
+        }
+        
+        .login-button {
+            padding: 8px 16px;
+            background-color: #4285f4;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .login-button:hover {
+            background-color: #357abd;
+        }
+        
+        .logout-button {
+            padding: 8px 16px;
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .logout-button:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <!-- User Panel -->
+    <div class="user-panel">
+        {% if user.is_authenticated %}
+            <div class="user-info">
+                <img src="{{ user.picture }}" alt="Profile" class="user-avatar" onclick="toggleChatHistory()">
+                <span class="user-name">{{ user.name }}</span>
+                <a href="{{ url_for('logout') }}" class="logout-button">Logout</a>
+                <div class="chat-history-dropdown" id="chat-history-dropdown">
+                    <div class="chat-history-title">Chat History</div>
+                    <ul class="chat-list" id="chat-list">
+                        {% for chat in user.chats %}
+                        <li class="chat-item" data-chat-id="{{ chat.id }}">
+                            {{ chat.title }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        {% else %}
+            <div id="g_id_onload"
+                data-client_id="351677565370-2tied2b684ha53e6gu6jle4qqkhe2ljh.apps.googleusercontent.com"
+                data-callback="handleCredentialResponse"
+                data-auto_prompt="false"
+                data-context="signin">
+            </div>
+        {% endif %}
+    </div>
+    
+    <div class="container">
+        <div class="settings-panel">
+            <div class="header">
+                <div class="logo">Luma AI Playground</div>
+            </div>
+            
+            <div class="preset-container">
+                <label>Presets:</label>
+                <div class="preset-buttons">
+                    <button class="preset-button active" data-preset="default">Default</button>
+                    <button class="preset-button" data-preset="cpa">CPA Exam</button>
+                    <button class="preset-button" data-preset="coding">Coding</button>
+                    <button class="preset-button" data-preset="creative">Creative</button>
+                    <button class="preset-button" data-preset="custom">Custom</button>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="model-select">Model:</label>
+                <select id="model-select">
+                    <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
+                    <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="system-prompt">System Prompt:</label>
+                <textarea id="system-prompt">You are Luma, a friendly and capable AI assistant. You are helpful, supportive, clear and concise in your communication, knowledgeable but humble, and proactive in offering relevant suggestions.</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="temperature-range">Temperature: <span class="range-value" id="temperature-value">0.7</span></label>
+                <div class="range-container">
+                    <input type="range" id="temperature-range" min="0" max="1" step="0.1" value="0.7">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="top-p-range">Top P: <span class="range-value" id="top-p-value">0.95</span></label>
+                <div class="range-container">
+                    <input type="range" id="top-p-range" min="0" max="1" step="0.05" value="0.95">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="top-k-range">Top K: <span class="range-value" id="top-k-value">40</span></label>
+                <div class="range-container">
+                    <input type="range" id="top-k-range" min="1" max="100" step="1" value="40">
+                </div>
+            </div>
+            
+            <button id="reset-chat">Reset Chat</button>
+        </div>
+        
+        <div class="chat-panel">
+            <div class="chat-container" id="chat-container">
+                <div class="message assistant-message">
+                    <div class="role">Luma:</div>
+                    <div class="content">Hello! I'm Luma, your AI assistant. {% if not user.is_authenticated %}You can start chatting right away, but if you'd like to save your chat history, please sign in with Google using the button in the top right corner.{% else %}How can I help you today?{% endif %}</div>
+                </div>
+            </div>
+            <div class="input-container">
+                <input type="text" id="user-input" placeholder="Type your message here..." autocomplete="off">
+                <button onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Prism JS for syntax highlighting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-c.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-csharp.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+
+    <script>
+        // Add this function to handle chat history dropdown
+        function toggleChatHistory() {
+            const dropdown = document.getElementById('chat-history-dropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('chat-history-dropdown');
+            const userAvatar = document.querySelector('.user-avatar');
+            
+            if (!userAvatar.contains(event.target) && !dropdown.contains(event.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+
+        // Initialize Google Sign-In
+        function initializeGoogleSignIn() {
+            google.accounts.id.initialize({
+                client_id: "351677565370-2tied2b684ha53e6gu6jle4qqkhe2ljh.apps.googleusercontent.com",
+                callback: handleCredentialResponse,
+                auto_select: false,
+                cancel_on_tap_outside: true,
+                context: "signin"
+            });
+            
+            google.accounts.id.renderButton(
+                document.querySelector(".g_id_signin"),
+                { theme: "outline", size: "large" }
+            );
+        }
+
+        // Google Sign-In callback
+        function handleCredentialResponse(response) {
+            // Show loading state
+            const authContainer = document.querySelector('.auth-container');
+            authContainer.innerHTML = '<div>Signing in...</div>';
+
+            // Send the credential to the server
+            fetch('/callback', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    credential: response.credential
+                }),
+                credentials: 'include'  // Important for cookies
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Reload the page to update the UI
+                    window.location.reload();
+                } else {
+                    throw new Error(data.error || 'Sign in failed');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                authContainer.innerHTML = `
+                    <div style="color: red;">Sign in failed: ${error.message}</div>
+                    <div id="g_id_onload"
+                         data-client_id="351677565370-2tied2b684ha53e6gu6jle4qqkhe2ljh.apps.googleusercontent.com"
+                         data-callback="handleCredentialResponse"
+                         data-context="signin">
+                    </div>
+                    <div class="g_id_signin"
+                         data-type="standard"
+                         data-size="large"
+                         data-theme="outline"
+                         data-text="signin_with"
+                         data-shape="rectangular"
+                         data-logo_alignment="left">
+                    </div>
+                `;
+            });
+        }
+
+        // Initialize Google Sign-In when the page loads
+        window.onload = function() {
+            initializeGoogleSignIn();
+        };
+
+        // DOM Elements
+        const input = document.getElementById('user-input');
+        const chatContainer = document.getElementById('chat-container');
+        const systemPromptInput = document.getElementById('system-prompt');
+        const modelSelect = document.getElementById('model-select');
+        const temperatureRange = document.getElementById('temperature-range');
+        const temperatureValue = document.getElementById('temperature-value');
+        const topPRange = document.getElementById('top-p-range');
+        const topPValue = document.getElementById('top-p-value');
+        const topKRange = document.getElementById('top-k-range');
+        const topKValue = document.getElementById('top-k-value');
+        const resetChatButton = document.getElementById('reset-chat');
+        const presetButtons = document.querySelectorAll('.preset-button');
+        
+        // Presets
+        const presets = {
+            default: {
+                model: 'gemini-1.5-flash',
+                systemPrompt: 'You are Luma, a friendly and capable AI assistant. You are helpful, supportive, clear and concise in your communication, knowledgeable but humble, and proactive in offering relevant suggestions.',
+                temperature: 0.7,
+                topP: 0.95,
+                topK: 40
+            },
+            cpa: {
+                model: 'gemini-1.5-flash',
+                systemPrompt: 'You are Luma, a specialized AI assistant for CPA exam preparation. You are an expert in all four sections of the CPA exam: Auditing and Attestation (AUD), Business Environment and Concepts (BEC), Financial Accounting and Reporting (FAR), and Regulation (REG). You are knowledgeable about the latest CPA exam format, including the changes to the 2024 CPA Evolution. You explain complex accounting concepts in simple terms and provide practice questions with detailed explanations.',
+                temperature: 0.5,
+                topP: 0.9,
+                topK: 30
+            },
+            coding: {
+                model: 'gemini-1.5-flash',
+                systemPrompt: 'You are Luma, an expert coding assistant. You excel at writing clean, efficient, and well-documented code in multiple programming languages. You can explain complex programming concepts clearly, debug issues, and suggest best practices. When sharing code, you always use proper markdown formatting with the appropriate language specified.',
+                temperature: 0.3,
+                topP: 0.85,
+                topK: 20
+            },
+            creative: {
+                model: 'gemini-1.5-flash',
+                systemPrompt: 'You are Luma, a creative writing assistant with a flair for storytelling, poetry, and imaginative content. You can help craft engaging narratives, develop characters, and generate creative ideas across various genres and styles. You have a rich vocabulary and can adapt your tone to match different creative contexts.',
+                temperature: 0.9,
+                topP: 1.0,
+                topK: 50
+            },
+            custom: {
+                model: 'gemini-1.5-flash',
+                systemPrompt: 'You are Luma, an AI assistant. Customize this prompt to define my personality, knowledge, and behavior.',
+                temperature: 0.7,
+                topP: 0.95,
+                topK: 40
+            }
+        };
+        
+        // Event Listeners
+        input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+        
+        temperatureRange.addEventListener('input', function() {
+            temperatureValue.textContent = this.value;
+        });
+        
+        topPRange.addEventListener('input', function() {
+            topPValue.textContent = this.value;
+        });
+        
+        topKRange.addEventListener('input', function() {
+            topKValue.textContent = this.value;
+        });
+        
+        resetChatButton.addEventListener('click', function() {
+            chatContainer.innerHTML = `
+                <div class="message assistant-message">
+                    <div class="role">Luma:</div>
+                    <div class="content">Hello! I'm Luma, your AI assistant. How can I help you today?</div>
+                </div>
+            `;
+        });
+        
+        presetButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const presetName = this.dataset.preset;
+                applyPreset(presetName);
+                
+                // Update active button
+                presetButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+        
+        // Functions
+        function applyPreset(presetName) {
+            const preset = presets[presetName];
+            if (!preset) return;
+            
+            modelSelect.value = preset.model;
+            systemPromptInput.value = preset.systemPrompt;
+            temperatureRange.value = preset.temperature;
+            temperatureValue.textContent = preset.temperature;
+            topPRange.value = preset.topP;
+            topPValue.textContent = preset.topP;
+            topKRange.value = preset.topK;
+            topKValue.textContent = preset.topK;
+        }
+
+        function addMessage(role, content) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${role}-message`;
+            
+            const roleDiv = document.createElement('div');
+            roleDiv.className = 'role';
+            roleDiv.textContent = role === 'user' ? 'You:' : 'Luma:';
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'content';
+            
+            // Process content for code blocks
+            if (role === 'assistant') {
+                // Parse markdown-style code blocks
+                const formattedContent = processCodeBlocks(content);
+                contentDiv.innerHTML = formattedContent;
+                
+                // Apply syntax highlighting to all code blocks
+                setTimeout(() => {
+                    Prism.highlightAllUnder(contentDiv);
+                }, 0);
+            } else {
+                contentDiv.textContent = content;
+            }
+            
+            messageDiv.appendChild(roleDiv);
+            messageDiv.appendChild(contentDiv);
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function processCodeBlocks(text) {
+            // Replace markdown code blocks with HTML
+            let processedText = text;
+            
+            // Match code blocks with language specification: ```language\ncode\n```
+            const codeBlockRegex = /```([a-zA-Z0-9_]+)?\n([\s\S]*?)```/g;
+            
+            // First, temporarily replace code blocks with placeholders to prevent them from being affected by newline replacement
+            const codeBlocks = [];
+            processedText = processedText.replace(codeBlockRegex, function(match, language, code) {
+                const placeholder = `__CODE_BLOCK_${codeBlocks.length}__`;
+                codeBlocks.push({language: language || 'plaintext', code: code.trim()});
+                return placeholder;
+            });
+            
+            // Replace inline code with HTML
+            const inlineCodeRegex = /`([^`]+)`/g;
+            processedText = processedText.replace(inlineCodeRegex, '<code class="language-plaintext">$1</code>');
+            
+            // Process markdown headers (# Header)
+            processedText = processedText.replace(/^(#{1,6})\s+(.+)$/gm, function(match, hashes, content) {
+                const level = hashes.length;
+                return `<h${level}>${content}</h${level}>`;
+            });
+            
+            // Process bold text (**text**)
+            processedText = processedText.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+            
+            // Process italic text (*text*)
+            processedText = processedText.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+            
+            // Replace newlines with <br> for non-code content
+            processedText = processedText.replace(/\n/g, '<br>');
+            
+            // Now replace the placeholders with the actual code blocks
+            codeBlocks.forEach((block, index) => {
+                const uniqueId = 'code-' + Math.random().toString(36).substr(2, 9);
+                const codeHtml = `
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>${block.language}</span>
+                        <button class="copy-button" onclick="copyCode('${uniqueId}')">Copy code</button>
+                    </div>
+                    <pre class="line-numbers"><code id="${uniqueId}" class="language-${block.language}">${escapeHtml(block.code)}</code></pre>
+                </div>`;
+                processedText = processedText.replace(`__CODE_BLOCK_${index}__`, codeHtml);
+            });
+            
+            return processedText;
+        }
+        
+        function escapeHtml(unsafe) {
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+        
+        function copyCode(elementId) {
+            const codeElement = document.getElementById(elementId);
+            const textToCopy = codeElement.textContent;
+            
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                // Show a temporary "Copied!" message
+                const button = event.target;
+                const originalText = button.textContent;
+                button.textContent = 'Copied!';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy text: ', err);
+            });
+        }
+
+        async function sendMessage() {
+            const message = input.value.trim();
+            if (!message) return;
+
+            // Clear input
+            input.value = '';
+
+            // Add user message to chat
+            addMessage('user', message);
+            
+            // Get current settings
+            const settings = {
+                model: modelSelect.value,
+                systemPrompt: systemPromptInput.value,
+                temperature: parseFloat(temperatureRange.value),
+                topP: parseFloat(topPRange.value),
+                topK: parseInt(topKRange.value)
+            };
+
+            try {
+                // Send message to backend with settings
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ 
+                        message,
+                        settings
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        // Show sign-in prompt
+                        addMessage('assistant', data.error);
+                        return;
+                    }
+                    throw new Error(data.error || 'Network response was not ok');
+                }
+                
+                // Add assistant response to chat
+                addMessage('assistant', data.response);
+            } catch (error) {
+                console.error('Error:', error);
+                addMessage('assistant', 'Sorry, I encountered an error. Please try again.');
+            }
+        }
+        
+        // Initialize with default preset
+        applyPreset('default');
+
+        // Chat history functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatList = document.getElementById('chat-list');
+            if (chatList) {
+                chatList.addEventListener('click', function(e) {
+                    if (e.target.classList.contains('chat-item')) {
+                        const chatId = e.target.dataset.chatId;
+                        loadChat(chatId);
+                    }
+                });
+            }
+        });
+        
+        function loadChat(chatId) {
+            fetch(`/chat/${chatId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update chat container with messages
+                        const chatContainer = document.getElementById('chat-container');
+                        chatContainer.innerHTML = '';
+                        data.messages.forEach(message => {
+                            addMessage(message.role, message.content);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+    </script>
+</body>
+</html> 

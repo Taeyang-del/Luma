@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: luma
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn luma.web:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9.0
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_API_KEY
+        sync: false
+      - key: FLASK_ENV
+        value: production
+      - key: SESSION_COOKIE_SECURE
+        value: true
+      - key: SESSION_COOKIE_HTTPONLY
+        value: true
+      - key: SESSION_COOKIE_SAMESITE
+        value: Lax
+      - key: PERMANENT_SESSION_LIFETIME
+        value: 604800  # 7 days in seconds
+      - key: SESSION_TYPE
+        value: filesystem
+      - key: SESSION_FILE_THRESHOLD
+        value: 500
+      - key: PORT
+        value: 8000 

@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luma AI Playground</title>
+    <!-- Add Prism CSS for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-okaidia.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" rel="stylesheet" />
+    <!-- Add Google Sign-In script -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <style>
+        :root {
+            --primary-color: #2196f3;
+            --primary-dark: #1976d2;
+            --bg-color: #f5f5f5;
+            --panel-bg: white;
+            --border-color: #ddd;
+            --text-color: #333;
+            --code-bg: #272822;
+            --header-bg: #343541;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+        
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+        
+        .settings-panel {
+            width: 300px;
+            background-color: var(--panel-bg);
+            border-right: 1px solid var(--border-color);
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .chat-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .auth-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+        }
+        
+        .user-name {
+            font-size: 14px;
+            color: var(--text-color);
+        }
+        
+        .logout-button {
+            padding: 8px 16px;
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .logout-button:hover {
+            background-color: #c82333;
+        }
+        
+        .chat-container {
+            background-color: var(--panel-bg);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        
+        .user-message {
+            background-color: #e3f2fd;
+            margin-left: 20%;
+        }
+        
+        .assistant-message {
+            background-color: #f5f5f5;
+            margin-right: 20%;
+        }
+        
+        .input-container {
+            display: flex;
+            gap: 10px;
+        }
+        
+        #user-input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        button:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .role {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .content {
+            white-space: pre-wrap;
+        }
+        
+        /* Code block styling */
+        pre {
+            background-color: var(--code-bg);
+            border-radius: 0 0 5px 5px;
+            margin: 0;
+            padding: 10px;
+            overflow-x: auto;
+            white-space: pre !important;
+            tab-size: 4;
+        }
+        
+        code {
+            font-family: 'Courier New', Courier, monospace;
+        }
+        
+        pre code {
+            white-space: pre !important;
+            display: block;
+            overflow-x: auto;
+            padding: 0.5em;
+            line-height: 1.5;
+        }
+        
+        .code-block {
+            position: relative;
+            margin: 15px 0;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            background-color: var(--header-bg);
+            color: white;
+            padding: 5px 10px;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            font-size: 12px;
+        }
+        
+        .copy-button {
+            background-color: transparent;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 0 5px;
+            font-size: 12px;
+        }
+        
+        .copy-button:hover {
+            text-decoration: underline;
+        }
+        
+        /* Form styling */
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        input[type="text"], 
+        input[type="number"], 
+        select, 
+        textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+        
+        /* Markdown styling */
+        h1, h2, h3, h4, h5, h6 {
+            margin-top: 1em;
+            margin-bottom: 0.5em;
+            font-weight: bold;
+        }
+        
+        h1 { font-size: 1.8em; }
+        h2 { font-size: 1.5em; }
+        h3 { font-size: 1.3em; }
+        h4 { font-size: 1.2em; }
+        h5 { font-size: 1.1em; }
+        h6 { font-size: 1em; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="settings-panel">
+            <h3>⚙️ Settings</h3>
+            
+            <div class="form-group">
+                <h4>Model Settings</h4>
+                <label for="model">Model</label>
+                <select id="model">
+                    <option value="luma-1.5">Luma 1.5</option>
+                    <option value="luma-1.5-pro">Luma 1.5 Pro</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <h4>System Prompt</h4>
+                <textarea id="system-prompt" rows="4">You are a helpful AI assistant.</textarea>
+            </div>
+            
+            <div class="form-group">
+                <h4>Generation Settings</h4>
+                <label for="temperature">Temperature</label>
+                <input type="range" id="temperature" min="0" max="1" step="0.1" value="0.7">
+                
+                <label for="top-p">Top P</label>
+                <input type="range" id="top-p" min="0" max="1" step="0.05" value="0.95">
+                
+                <label for="top-k">Top K</label>
+                <input type="range" id="top-k" min="1" max="100" value="40">
+            </div>
+            
+            <button onclick="clearChat()">🗑️ Clear Chat</button>
+        </div>
+        
+        <div class="chat-panel">
+            <div class="header">
+                <div class="logo">Luma AI Playground</div>
+                <div class="auth-container">
+                    <div id="g_id_onload"
+                         data-client_id="YOUR_GOOGLE_CLIENT_ID"
+                         data-callback="handleCredentialResponse">
+                    </div>
+                    <div class="g_id_signin"
+                         data-type="standard"
+                         data-size="large"
+                         data-theme="outline"
+                         data-text="signin_with"
+                         data-shape="rectangular"
+                         data-logo_alignment="left">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chat-container" id="chat-container">
+                <!-- Chat messages will be added here -->
+            </div>
+            
+            <div class="input-container">
+                <input type="text" id="user-input" placeholder="What would you like to know?">
+                <button onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize chat history
+        let chatHistory = [];
+        
+        // Function to add a message to the chat
+        function addMessage(role, content) {
+            const chatContainer = document.getElementById('chat-container');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${role}-message`;
+            
+            const roleDiv = document.createElement('div');
+            roleDiv.className = 'role';
+            roleDiv.textContent = role.charAt(0).toUpperCase() + role.slice(1);
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'content';
+            contentDiv.textContent = content;
+            
+            messageDiv.appendChild(roleDiv);
+            messageDiv.appendChild(contentDiv);
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            
+            chatHistory.push({ role, content });
+        }
+        
+        // Function to send a message
+        async function sendMessage() {
+            const input = document.getElementById('user-input');
+            const prompt = input.value.trim();
+            
+            if (!prompt) return;
+            
+            // Add user message
+            addMessage('user', prompt);
+            input.value = '';
+            
+            // Get settings
+            const model = document.getElementById('model').value;
+            const systemPrompt = document.getElementById('system-prompt').value;
+            const temperature = parseFloat(document.getElementById('temperature').value);
+            const topP = parseFloat(document.getElementById('top-p').value);
+            const topK = parseInt(document.getElementById('top-k').value);
+            
+            try {
+                // Send request to backend
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        prompt,
+                        model,
+                        system_prompt: systemPrompt,
+                        temperature,
+                        top_p: topP,
+                        top_k: topK
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                
+                // Add assistant message
+                addMessage('assistant', data.response);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                addMessage('assistant', `Error: ${error.message}`);
+            }
+        }
+        
+        // Function to clear chat
+        function clearChat() {
+            const chatContainer = document.getElementById('chat-container');
+            chatContainer.innerHTML = '';
+            chatHistory = [];
+        }
+        
+        // Handle Enter key in input
+        document.getElementById('user-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+        
+        // Handle Google Sign-In
+        function handleCredentialResponse(response) {
+            // Handle the Google Sign-In response
+            console.log("Google Sign-In response:", response);
+        }
+    </script>
+</body>
+</html> 
