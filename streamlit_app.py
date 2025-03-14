@@ -1,19 +1,16 @@
 import streamlit as st
 import os
 from luma.core import Luma
-import json
 from datetime import datetime
 
 # Initialize session state
 if 'chat_history' not in st.session_state:
-    st.session_state.chat_history = []
-if 'user' not in st.session_state:
-    st.session_state.user = None
+    st.session_state.chat_history = []  # List to store chat history
 
 # Initialize Luma with the API key
-GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY', "AIzaSyD3NIhejC7JNQ5OXBFcjACVoOGHaiUzf3o")
+API_KEY = os.getenv('GOOGLE_API_KEY', "AIzaSyD3NIhejC7JNQ5OXBFcjACVoOGHaiUzf3o")  # Use your API key here
 try:
-    luma = Luma(api_key=GOOGLE_API_KEY)
+    luma = Luma(api_key=API_KEY)
     print("Luma initialized successfully with Google Gemini API")
 except Exception as e:
     print(f"Error initializing Luma: {str(e)}")
@@ -50,10 +47,10 @@ with st.sidebar:
     # Instruction input
     instruction = st.text_area("Instructions for AI", "You are a helpful assistant.")
     
-    # Predefined settings
+    # Predefined settings with "Tutor Me" option
     predefined_settings = st.selectbox(
         "Predefined Settings",
-        ["Regular", "CPA Exam", "Custom"],
+        ["Regular", "CPA Exam", "Tutor Me", "Custom"],  # Added "Tutor Me" option
         index=0
     )
     
@@ -65,6 +62,8 @@ with st.sidebar:
     # Set predefined instructions based on selection
     if predefined_settings == "CPA Exam":
         instruction = "You are a study assistant for the CPA exam. Provide concise and accurate answers."
+    elif predefined_settings == "Tutor Me":
+        instruction = "You are a tutor. Provide detailed explanations and ask questions to ensure understanding.Do not tell them the answer, just ask questions and guide them through the problem.Do not Play games at all. Make sure you keep helping them with their questions and problems.And if they ask you to play a game, just say no."
     elif predefined_settings == "Regular":
         instruction = "You are a helpful assistant."
 
@@ -90,8 +89,12 @@ if prompt := st.chat_input("What would you like to know?"):
     # Get AI response
     if luma:
         try:
-            # Combine instruction with user prompt
-            full_prompt = f"{instruction}\n{prompt}"
+            # Construct the full prompt with chat history
+            full_prompt = instruction + "\n"
+            for message in st.session_state.chat_history:
+                full_prompt += f"{message['role']}: {message['content']}\n"
+            
+            # Get the AI response
             response = luma.get_response(
                 full_prompt,
                 model=model_options[model],
@@ -118,7 +121,7 @@ if prompt := st.chat_input("What would you like to know?"):
 
 # Add a clear chat button
 if st.button("Clear Chat"):
-    st.session_state.chat_history = []
+    st.session_state.chat_history = []  # Clear chat history
     st.rerun()
 
 # Function to list available models
