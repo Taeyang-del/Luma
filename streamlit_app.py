@@ -35,8 +35,8 @@ with st.sidebar:
     
     # Model selection
     model_options = {
-        "Luma 2.5 pro": "gemini-1.5-flash",
-        "Luma 3.0 flash": "gemini-1.5-pro"
+        "Luma 3.0 pro max": "gemini-1.5-flash",
+        "Luma 3.5 pro": "gemini-1.5-pro"
     }
     model = st.selectbox(
         "Model",
