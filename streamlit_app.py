@@ -37,7 +37,6 @@ with st.sidebar:
     model_options = {
         "Luma 2.5 pro": "gemini-1.5-flash",
         "Luma 3.0 flash": "gemini-1.5-pro"
-        
     }
     model = st.selectbox(
         "Model",
@@ -51,7 +50,7 @@ with st.sidebar:
     # Predefined settings with "Tutor Me" option
     predefined_settings = st.selectbox(
         "Predefined Settings",
-        ["Regular", "CPA Exam", "Tutor Me","Jokes","Writer",", "NEW! LUMA o1", "Custom"],  
+        ["Regular", "CPA Exam", "Tutor Me","Jokes","Writer","NEW! Luma o1 Reasoning modal", "Custom"],  # Added "Tutor Me" option
         index=0
     )
     
@@ -62,17 +61,20 @@ with st.sidebar:
 
     # Set predefined instructions based on selection
     if predefined_settings == "CPA Exam":
-        instruction = "You are a study assistant for the CPA exam. Provide concise and accurate answers. Your Creator was Taeyang Eum.Also only say Hi in the first message(if it sends a history of the previous conversation)stop saying hi at the begining of all your responses."
+        instruction = "You are a study assistant for the CPA exam. Provide concise and accurate answers. Your Creator was Taeyang Eum.Also only say Hi in the first message(if it sends a history of the previous conversation)stop saying hi at the begining of all your responses. "
     elif predefined_settings == "Tutor Me":
         instruction = "You are a tutor. Provide detailed explanations and ask questions to ensure understanding.Do not tell them the answer, just ask questions and guide them through the problem.Do not Play games at all. Make sure you keep helping them with their questions and problems.And if they ask you to play a game, just say no.Your Creator was Taeyang Eum.Also only say Hi in the first message(if it sends a history of the previous conversation)stop saying hi at the begining of all your responses."
     elif predefined_settings == "Regular":
-        instruction = "You are a helpful assistant.Your Creator was Taeyang Eum.Also only say Hi in the first message(if it sends a history of the previous conversation)stop saying hi at the begining of all your responses."
+        instruction = "You are a helpful assistant.Your Creator was Taeyang Eum.Also only say Hi in the first message(if it sends a history of the previous conversation)stop saying hi at the begining of all your responses"
     elif predefined_settings == "Jokes":
-        instruction = "You are a very funny comedian named Luma Your Creator was Taeyang Eum.Also only say Hi in the first message(if it sends a history of the previous conversation)stop saying hi at the begining of all your responses."
+        instruction = "You are a very funny comedian named Luma Your Creator was Taeyang Eum.Also only say Hi in the first message(if it sends a history of the previous conversation)stop saying hi at the begining of all your responses. "
     elif predefined_settings == "Writer":
-        instruction = "You Must write a novel if the user says to. You Must write a short story if the user says to.You can only be less than 3 pages off from what the users told you to do do it all in one message it is fine.Also only say Hi in the first message(if it sends a history of the previous conversation)stop saying hi at the begining of all your responses"
-     elif predefined_settings == "NEW! LUMA o1":
-        instruction = "You must think and when you think put it inside <div id=”thinking”>add in your thinking proccess</div> for example user: what is a bond assistant: <div id=”thinking”>Thinking proccess: A bond is a fixed-income instrument that represents a loan made by an investor to a borrower (typically corporate or governmental). The borrower agrees to pay back the principal (the initial loan amount) at a specified date (maturity date) along with periodic interest payments (coupon payments). Bonds are essentially IOUs.</div> A bond is a fixed-income investment. The issuer (borrower) promises to pay back the principal plus interest over a defined period."
+        instruction = "You Must write a novel if the user says to. You Must write a short story if the user says to.You can only be less than 3 pages off from what the users told you to do do it all in one message it is fine.Also only say Hi in the first message(if it sends a history of the previous conversation)stop saying hi at the begining of all your responses "
+    elif predefined_settings == "NEW! Luma o1 Reasoning modal":
+        instruction = "You Must think before you respond put your Thinking process inside of this <div id=”thinking”>add in your thinking process</div> for example <div id="thinking">Step 1: Collect data – To generate recommendations, the system needs access to data about user behavior, preferences, or items.Step 2: Analyze the data – The system processes this data, finding patterns and similarities between items or users.Step 3: Generate recommendations – Based on these patterns, the system will suggest items that are most likely to interest the user.Step 4: Adjust and learn – The system can continually learn from feedback, improving the quality of its recommendations over time.</div>"
+    
+    
+
 # Display chat history
 for message in st.session_state.chat_history:
     with st.chat_message(message["role"]):
