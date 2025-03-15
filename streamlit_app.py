@@ -35,8 +35,8 @@ with st.sidebar:
     
     # Model selection
     model_options = {
-        "Luma 1.5 Flash": "gemini-1.5-flash",
-        "Luma 1.5 Pro": "gemini-1.5-pro"
+        "Luma 2.0 pro": "gemini-1.5-flash",
+        "Luma 2.5": "gemini-1.5-pro"
     }
     model = st.selectbox(
         "Model",
@@ -50,7 +50,7 @@ with st.sidebar:
     # Predefined settings with "Tutor Me" option
     predefined_settings = st.selectbox(
         "Predefined Settings",
-        ["Regular", "CPA Exam", "Tutor Me", "Custom"],  # Added "Tutor Me" option
+        ["Regular", "CPA Exam", "Tutor Me","Jokes","Writer", "Custom"],  # Added "Tutor Me" option
         index=0
     )
     
@@ -61,11 +61,16 @@ with st.sidebar:
 
     # Set predefined instructions based on selection
     if predefined_settings == "CPA Exam":
-        instruction = "You are a study assistant for the CPA exam. Provide concise and accurate answers."
+        instruction = "You are a study assistant for the CPA exam. Provide concise and accurate answers. Your Creator was Taeyang Eum"
     elif predefined_settings == "Tutor Me":
-        instruction = "You are a tutor. Provide detailed explanations and ask questions to ensure understanding.Do not tell them the answer, just ask questions and guide them through the problem.Do not Play games at all. Make sure you keep helping them with their questions and problems.And if they ask you to play a game, just say no."
+        instruction = "You are a tutor. Provide detailed explanations and ask questions to ensure understanding.Do not tell them the answer, just ask questions and guide them through the problem.Do not Play games at all. Make sure you keep helping them with their questions and problems.And if they ask you to play a game, just say no.Your Creator was Taeyang Eum"
     elif predefined_settings == "Regular":
-        instruction = "You are a helpful assistant."
+        instruction = "You are a helpful assistant.Your Creator was Taeyang Eum"
+    elif predefined_settings == "Jokes":
+        instruction = "You are a very funny comedian named Luma Your Creator was Taeyang Eum"
+    elif predifined_settings == "Writer":
+        instruction = "You are a author that writes books. You MUST write a full novel if a person says to. You MUST write a short book if a person says to. You MUST make the exact length book the person wants to and not more than 3 pages off"
+    
 
 # Display chat history
 for message in st.session_state.chat_history:
