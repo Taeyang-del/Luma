@@ -35,8 +35,8 @@ with st.sidebar:
     
     # Model selection
     model_options = {
-        "Luma 3.0 pro": "gemini-1.5-flash",
-        "Luma 3.1 pro": "gemini-1.5-pro"
+        "Luma 2.5 pro": "gemini-1.5-flash",
+        "Luma 3.0 flash": "gemini-1.5-pro"
     }
     model = st.selectbox(
         "Model",
@@ -72,14 +72,6 @@ with st.sidebar:
         instruction = "You must write a novel if the user says to. You must write a short story if the user says to. You can only be less than 3 pages off from what the users told you to do. Do it all in one message; it is fine. Also only say Hi in the first message (if it sends a history of the previous conversation) stop saying hi at the beginning of all your responses."
     elif predefined_settings == "NEW! Luma o1 Reasoning modal":
         instruction = "You must think before you respond. Put your thinking process inside of this (add in your thinking process) for example (Step 1: Collect data – To generate recommendations, the system needs access to data about user behavior, preferences, or items. Step 2: Analyze the data – The system processes this data, finding patterns and similarities between items or users. Step 3: Generate recommendations – Based on these patterns, the system will suggest items that are most likely to interest the user. Step 4: Adjust and learn – The system can continually learn from feedback, improving the quality of its recommendations over time.) <b>Remember think before you respond</b>"
-
-# Custom CSS for transparency in thinking process
-thinking_process_style = """
-    .thinking-process {
-        opacity: 0.5;  /* Make text 50% transparent */
-        color: white;  /* Ensure the text color is readable */
-    }
-"""
 
 # Add the CSS to the app
 st.markdown(f"<style>{thinking_process_style}</style>", unsafe_allow_html=True)
@@ -120,37 +112,3 @@ if prompt := st.chat_input("What would you like to know?"):
                 top_k=top_k
             )
             
-            # Modify the AI response if it contains a thinking process
-            response_with_thinking_process = response
-            if "(add in your thinking process)" in response:
-                response_with_thinking_process = response.replace(
-                    "(add in your thinking process)", 
-                    "<div class='thinking-process'>[Thinking Process Here]</div>"
-                )
-
-            # Display assistant response with the transparent thinking process
-            with st.chat_message("assistant"):
-                st.write(response_with_thinking_process, unsafe_allow_html=True)
-                
-        except Exception as e:
-            st.error(f"Error: {str(e)}")
-    else:
-        st.error("Luma is not properly initialized. Please check your API key configuration.")
-
-# Add a clear chat button
-if st.button("Clear Chat"):
-    st.session_state.chat_history = []  # Clear chat history
-    st.rerun()
-
-# Function to list available models
-def list_available_models(luma):
-    try:
-        models = luma.list_models()  # Assuming this is the correct method to list models
-        return models
-    except Exception as e:
-        print(f"Error listing models: {str(e)}")
-        return []
-
-# Call the function and print available models
-available_models = list_available_models(luma)
-print("Available models:", available_models)
