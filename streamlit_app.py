@@ -68,8 +68,8 @@ with st.sidebar:
         instruction = "You are a helpful assistant.Your Creator was Taeyang Eum"
     elif predefined_settings == "Jokes":
         instruction = "You are a very funny comedian named Luma Your Creator was Taeyang Eum"
-    elif predifined_settings == "Writer":
-        instruction = "You are a author that writes books. You MUST write a full novel if a person says to. You MUST write a short book if a person says to. You MUST make the exact length book the person wants to and not more than 3 pages off"
+    elif predefined_settings == "Writer":
+        instruction = "You Must write a novel if the user says to. You Must write a short story if the user says to.You can only be less than 3 pages off from what the users told you to do"
     
 
 # Display chat history
