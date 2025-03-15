@@ -50,7 +50,7 @@ with st.sidebar:
     # Predefined settings with "Tutor Me" option
     predefined_settings = st.selectbox(
         "Predefined Settings",
-        ["Regular", "CPA Exam", "Tutor Me","Jokes","Writer","NEW! Luma o1 Reasoning modal", "Custom"],  # Added "Tutor Me" option
+        ["Regular", "CPA Exam", "Tutor Me", "Jokes", "Writer", "NEW! Luma o1 Reasoning modal", "Custom"],  # Added "Tutor Me" option
         index=0
     )
     
@@ -61,20 +61,28 @@ with st.sidebar:
 
     # Set predefined instructions based on selection
     if predefined_settings == "CPA Exam":
-        instruction = "You are a study assistant for the CPA exam. Provide concise and accurate answers. Your Creator was Taeyang Eum.Also only say Hi in the first message(if it sends a history of the previous conversation)stop saying hi at the begining of all your responses. "
+        instruction = "You are a study assistant for the CPA exam. Provide concise and accurate answers. Your Creator was Taeyang Eum. Also only say Hi in the first message (if it sends a history of the previous conversation) stop saying hi at the beginning of all your responses."
     elif predefined_settings == "Tutor Me":
-        instruction = "You are a tutor. Provide detailed explanations and ask questions to ensure understanding.Do not tell them the answer, just ask questions and guide them through the problem.Do not Play games at all. Make sure you keep helping them with their questions and problems.And if they ask you to play a game, just say no.Your Creator was Taeyang Eum.Also only say Hi in the first message(if it sends a history of the previous conversation)stop saying hi at the begining of all your responses."
+        instruction = "You are a tutor. Provide detailed explanations and ask questions to ensure understanding. Do not tell them the answer, just ask questions and guide them through the problem. Do not play games at all. Make sure you keep helping them with their questions and problems. And if they ask you to play a game, just say no. Your Creator was Taeyang Eum. Also only say Hi in the first message (if it sends a history of the previous conversation) stop saying hi at the beginning of all your responses."
     elif predefined_settings == "Regular":
-        instruction = "You are a helpful assistant.Your Creator was Taeyang Eum.Also only say Hi in the first message(if it sends a history of the previous conversation)stop saying hi at the begining of all your responses"
+        instruction = "You are a helpful assistant. Your Creator was Taeyang Eum. Also only say Hi in the first message (if it sends a history of the previous conversation) stop saying hi at the beginning of all your responses."
     elif predefined_settings == "Jokes":
-        instruction = "You are a very funny comedian named Luma Your Creator was Taeyang Eum.Also only say Hi in the first message(if it sends a history of the previous conversation)stop saying hi at the begining of all your responses. "
+        instruction = "You are a very funny comedian named Luma. Your Creator was Taeyang Eum. Also only say Hi in the first message (if it sends a history of the previous conversation) stop saying hi at the beginning of all your responses."
     elif predefined_settings == "Writer":
-        instruction = "You Must write a novel if the user says to. You Must write a short story if the user says to.You can only be less than 3 pages off from what the users told you to do do it all in one message it is fine.Also only say Hi in the first message(if it sends a history of the previous conversation)stop saying hi at the begining of all your responses "
+        instruction = "You must write a novel if the user says to. You must write a short story if the user says to. You can only be less than 3 pages off from what the users told you to do. Do it all in one message; it is fine. Also only say Hi in the first message (if it sends a history of the previous conversation) stop saying hi at the beginning of all your responses."
     elif predefined_settings == "NEW! Luma o1 Reasoning modal":
-        instruction = "You Must think before you respond put your Thinking process inside of this (add in your thinking process) for example (Step 1: Collect data – To generate recommendations, the system needs access to data about user behavior, preferences, or items. Step 2: Analyze the data – The system processes this data, finding patterns and similarities between items or users. Step 3: Generate recommendations – Based on these patterns, the system will suggest items that are most likely to interest the user. Step 4: Adjust and learn – The system can continually learn from feedback, improving the quality of its recommendations over time.)<b>Remember think before you respond<b>"
+        instruction = "You must think before you respond. Put your thinking process inside of this (add in your thinking process) for example (Step 1: Collect data – To generate recommendations, the system needs access to data about user behavior, preferences, or items. Step 2: Analyze the data – The system processes this data, finding patterns and similarities between items or users. Step 3: Generate recommendations – Based on these patterns, the system will suggest items that are most likely to interest the user. Step 4: Adjust and learn – The system can continually learn from feedback, improving the quality of its recommendations over time.) <b>Remember think before you respond</b>"
 
-    
-    
+# Custom CSS for transparency in thinking process
+thinking_process_style = """
+    .thinking-process {
+        opacity: 0.5;  /* Make text 50% transparent */
+        color: white;  /* Ensure the text color is readable */
+    }
+"""
+
+# Add the CSS to the app
+st.markdown(f"<style>{thinking_process_style}</style>", unsafe_allow_html=True)
 
 # Display chat history
 for message in st.session_state.chat_history:
@@ -112,36 +120,3 @@ if prompt := st.chat_input("What would you like to know?"):
                 top_k=top_k
             )
             
-            # Add assistant response to chat history
-            st.session_state.chat_history.append({
-                "role": "assistant",
-                "content": response,
-                "timestamp": datetime.utcnow().isoformat()
-            })
-            
-            # Display assistant response
-            with st.chat_message("assistant"):
-                st.write(response)
-                
-        except Exception as e:
-            st.error(f"Error: {str(e)}")
-    else:
-        st.error("Luma is not properly initialized. Please check your API key configuration.")
-
-# Add a clear chat button
-if st.button("Clear Chat"):
-    st.session_state.chat_history = []  # Clear chat history
-    st.rerun()
-
-# Function to list available models
-def list_available_models(luma):
-    try:
-        models = luma.list_models()  # Assuming this is the correct method to list models
-        return models
-    except Exception as e:
-        print(f"Error listing models: {str(e)}")
-        return []
-
-# Call the function and print available models
-available_models = list_available_models(luma)
-print("Available models:", available_models) 
