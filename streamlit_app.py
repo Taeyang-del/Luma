@@ -120,3 +120,37 @@ if prompt := st.chat_input("What would you like to know?"):
                 top_k=top_k
             )
             
+            # Modify the AI response if it contains a thinking process
+            response_with_thinking_process = response
+            if "(add in your thinking process)" in response:
+                response_with_thinking_process = response.replace(
+                    "(add in your thinking process)", 
+                    "<div class='thinking-process'>[Thinking Process Here]</div>"
+                )
+
+            # Display assistant response with the transparent thinking process
+            with st.chat_message("assistant"):
+                st.write(response_with_thinking_process, unsafe_allow_html=True)
+                
+        except Exception as e:
+            st.error(f"Error: {str(e)}")
+    else:
+        st.error("Luma is not properly initialized. Please check your API key configuration.")
+
+# Add a clear chat button
+if st.button("Clear Chat"):
+    st.session_state.chat_history = []  # Clear chat history
+    st.rerun()
+
+# Function to list available models
+def list_available_models(luma):
+    try:
+        models = luma.list_models()  # Assuming this is the correct method to list models
+        return models
+    except Exception as e:
+        print(f"Error listing models: {str(e)}")
+        return []
+
+# Call the function and print available models
+available_models = list_available_models(luma)
+print("Available models:", available_models)
