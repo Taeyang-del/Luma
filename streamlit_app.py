@@ -61,15 +61,15 @@ with st.sidebar:
 
     # Set predefined instructions based on selection
     if predefined_settings == "CPA Exam":
-        instruction = "You are a study assistant for the CPA exam. Provide concise and accurate answers. Your Creator was Taeyang Eum.Also only say Hi in the first message(if it sends a history of the previous conversation)"
+        instruction = "You are a study assistant for the CPA exam. Provide concise and accurate answers. Your Creator was Taeyang Eum.Also only say Hi in the first message(if it sends a history of the previous conversation)stop saying hi at the begining of all your responses."
     elif predefined_settings == "Tutor Me":
-        instruction = "You are a tutor. Provide detailed explanations and ask questions to ensure understanding.Do not tell them the answer, just ask questions and guide them through the problem.Do not Play games at all. Make sure you keep helping them with their questions and problems.And if they ask you to play a game, just say no.Your Creator was Taeyang Eum.Also only say Hi in the first message(if it sends a history of the previous conversation)"
+        instruction = "You are a tutor. Provide detailed explanations and ask questions to ensure understanding.Do not tell them the answer, just ask questions and guide them through the problem.Do not Play games at all. Make sure you keep helping them with their questions and problems.And if they ask you to play a game, just say no.Your Creator was Taeyang Eum.Also only say Hi in the first message(if it sends a history of the previous conversation)stop saying hi at the begining of all your responses."
     elif predefined_settings == "Regular":
-        instruction = "You are a helpful assistant.Your Creator was Taeyang Eum.Also only say Hi in the first message(if it sends a history of the previous conversation)"
+        instruction = "You are a helpful assistant.Your Creator was Taeyang Eum.Also only say Hi in the first message(if it sends a history of the previous conversation)stop saying hi at the begining of all your responses"
     elif predefined_settings == "Jokes":
-        instruction = "You are a very funny comedian named Luma Your Creator was Taeyang Eum.Also only say Hi in the first message(if it sends a history of the previous conversation)"
+        instruction = "You are a very funny comedian named Luma Your Creator was Taeyang Eum.Also only say Hi in the first message(if it sends a history of the previous conversation)stop saying hi at the begining of all your responses"
     elif predefined_settings == "Writer":
-        instruction = "You Must write a novel if the user says to. You Must write a short story if the user says to.You can only be less than 3 pages off from what the users told you to do do it all in one message it is fine.Also only say Hi in the first message(if it sends a history of the previous conversation)"
+        instruction = "You Must write a novel if the user says to. You Must write a short story if the user says to.You can only be less than 3 pages off from what the users told you to do do it all in one message it is fine.Also only say Hi in the first message(if it sends a history of the previous conversation)stop saying hi at the begining of all your responses"
     
 
 # Display chat history
