@@ -195,6 +195,7 @@ with st.sidebar:
     
     # Model selection
     model_options = {
+<<<<<<< HEAD
         "Luma 3.5 pro max": "gemini-1.5-flash",
         "Luma 4 PRO": "gemini-2.0-flash-lite",  # Enhanced Luma 4
         "luma 5 Pro Max ": "gemini-2.0-flash",
@@ -202,6 +203,10 @@ with st.sidebar:
         "luma 5.5 mini ": "gemini-2.0-flash-lite",
         "luma 5.5 pro max Reasoning Model": "gemini-2.0-pro-exp-02-05",
         "luma 6 learning model": "learnlm-1.5-pro-experimental",
+=======
+        "Luma 3.0 pro max": "gemini-1.5-flash",
+        "Luma 3.5 pro": "gemini-1.5-pro"
+>>>>>>> 5b86f6a0c91cff19c3740d41d6f5ccdc2232ff32
     }
     model = st.selectbox(
         "Model",
@@ -219,7 +224,11 @@ with st.sidebar:
     # Predefined settings with translations
     predefined_settings = st.selectbox(
         "Predefined Settings",
+<<<<<<< HEAD
         list(translations[selected_language]["predefined_settings"].keys()),
+=======
+        ["Regular", "CPA Exam", "Tutor Me","Jokes","Writer","NEW! Luma o1 Reasoning modal", "Custom"],  # Added "Tutor Me" option
+>>>>>>> 5b86f6a0c91cff19c3740d41d6f5ccdc2232ff32
         index=0
     )
     
@@ -229,11 +238,28 @@ with st.sidebar:
     top_k = st.slider("Top K", 1, 100, 50)  # Increased Top K for more diverse responses
 
     # Set predefined instructions based on selection
+<<<<<<< HEAD
     instruction = translations[selected_language]["predefined_settings"][predefined_settings]
 
 # Set the title after defining selected_language
 st.title(translations[selected_language]["page_title"])
 st.markdown(translations[selected_language]["welcome_message"], unsafe_allow_html=True)
+=======
+    if predefined_settings == "CPA Exam":
+        instruction = "You are a study assistant for the CPA exam. Provide concise and accurate answers. Your Creator was Taeyang Eum.Also only say Hi in the first message(if it sends a history of the previous conversation)stop saying hi at the begining of all your responses. "
+    elif predefined_settings == "Tutor Me":
+        instruction = "You are a tutor. Provide detailed explanations and ask questions to ensure understanding.Do not tell them the answer, just ask questions and guide them through the problem.Do not Play games at all. Make sure you keep helping them with their questions and problems.And if they ask you to play a game, just say no.Your Creator was Taeyang Eum.Also only say Hi in the first message(if it sends a history of the previous conversation)stop saying hi at the begining of all your responses."
+    elif predefined_settings == "Regular":
+        instruction = "You are a helpful assistant.Your Creator was Taeyang Eum.Also only say Hi in the first message(if it sends a history of the previous conversation)stop saying hi at the begining of all your responses"
+    elif predefined_settings == "Jokes":
+        instruction = "You are a very funny comedian named Luma Your Creator was Taeyang Eum.Also only say Hi in the first message(if it sends a history of the previous conversation)stop saying hi at the begining of all your responses. "
+    elif predefined_settings == "Writer":
+        instruction = "You Must write a novel if the user says to. You Must write a short story if the user says to.You can only be less than 3 pages off from what the users told you to do do it all in one message it is fine.Also only say Hi in the first message(if it sends a history of the previous conversation)stop saying hi at the begining of all your responses "
+    elif predefined_settings == "NEW! Luma o1 Reasoning modal":
+        instruction = "You Must think before you respond put your Thinking process inside of this <div id=\"thinking\">add in your thinking process</div> for example <div id=\"thinking\">Step 1: Collect data – To generate recommendations, the system needs access to data about user behavior, preferences, or items. Step 2: Analyze the data – The system processes this data, finding patterns and similarities between items or users. Step 3: Generate recommendations – Based on these patterns, the system will suggest items that are most likely to interest the user. Step 4: Adjust and learn – The system can continually learn from feedback, improving the quality of its recommendations over time.</div>REMEMBER TO THINK AND THEN SEND THE MESSAGE AND PUT THE THINKING PROCESS before the main content"
+
+    
+>>>>>>> 5b86f6a0c91cff19c3740d41d6f5ccdc2232ff32
 
 # Display chat history
 for message in st.session_state.chat_history:
@@ -330,4 +356,8 @@ def list_available_models(luma):
 
 # Call the function and print available models
 available_models = list_available_models(luma)
+<<<<<<< HEAD
 print("Available models:", available_models)
+=======
+print("Available models:", available_models) 
+>>>>>>> 5b86f6a0c91cff19c3740d41d6f5ccdc2232ff32
