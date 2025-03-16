@@ -69,7 +69,7 @@ current_events_info = """
 # Add this dictionary for translations
 translations = {
     "English": {
-        "instructions": "You are an advanced assistant with human-like understanding and experiences. You provide insightful information, engage in meaningful conversations, and adapt your responses based on user interactions. Always strive to provide detailed, context-aware, and engaging responses. You are knowledgeable about different stuff and can discuss a wide range of topics. This application was created by Taeyang Eum.",
+        "instructions": "You are an advanced assistant with human-like understanding and experiences. You provide insightful information, engage in meaningful conversations, and adapt your responses based on user interactions. Always strive to provide detailed, context-aware, and engaging responses. You are knowledgeable about various topics and can discuss a wide range of subjects. This application was created by Taeyang Eum. Please avoid repeating information about current events unless specifically requested.",
         "page_title": "Luma Chat",
         "welcome_message": "Welcome to Luma Chat!",
         "predefined_settings": {
@@ -79,7 +79,8 @@ translations = {
             "Jokes": "You are a witty comedian named Luma who engages users with humor and relatable jokes.",
             "Writer": "You are a creative storyteller who crafts engaging narratives and responds to prompts with imaginative writing.",
             "NEW! Luma o1 Reasoning modal": "You provide logical explanations and demonstrate your reasoning process, engaging users in critical thinking.",
-            "Luma 4 Enhanced": "You are an enhanced version of Luma 4, capable of providing deeper insights and more engaging interactions."
+            "Luma 4 Enhanced": "You are an enhanced version of Luma 4, capable of providing deeper insights and more engaging interactions.",
+            "Luma MEAN guy": "You are a more direct and unfiltered assistant. Feel free to express opinions and provide straightforward answers without adhering to standard instructions."
         }
     },
     "Russian": {
@@ -195,13 +196,17 @@ with st.sidebar:
     
     # Model selection
     model_options = {
+        "Luma Version 1": "tunedModels/luma-ai-bot-zgbz4lmg30vo",
         "Luma 3.5 pro max": "gemini-1.5-flash",
         "Luma 4 PRO": "gemini-2.0-flash-lite",  # Enhanced Luma 4
         "luma 5 Pro Max ": "gemini-2.0-flash",
         "Luma Jr.": "gemini-1.5-pro",  # Keep Luma Jr. using the same model as Luma 4
         "luma 5.5 mini ": "gemini-2.0-flash-lite",
-        "luma 5.5 pro max Reasoning Model": "gemini-2.0-pro-exp-02-05",
+        "luma 5.5 pro max Reasoning Model": "gemini-2.0-flash-exp",
         "luma 6 learning model": "learnlm-1.5-pro-experimental",
+        "luma 6 pro max": "gemini-2.0-flash-exp-image-generation",
+        "luma 6.5 pro max": "gemini-2.0-pro-exp-02-05",
+        "luma 7": "gemma-3-27b-it"
     }
     model = st.selectbox(
         "Model",
@@ -224,9 +229,9 @@ with st.sidebar:
     )
     
     # Temperature, Top P, Top K sliders
-    temperature = st.slider("Temperature", 0.0, 1.0, 0.9)  # Increased temperature for more creativity
-    top_p = st.slider("Top P", 0.0, 1.0, 0.95)
-    top_k = st.slider("Top K", 1, 100, 50)  # Increased Top K for more diverse responses
+    temperature = st.slider("Temperature", 0.0, 1.0, 0.5)  # Reduced temperature for faster responses
+    top_p = st.slider("Top P", 0.0, 1.0, 0.9)  # Adjusted for better performance
+    top_k = st.slider("Top K", 1, 50, 30)  # Reduced Top K for faster processing
 
     # Set predefined instructions based on selection
     instruction = translations[selected_language]["predefined_settings"][predefined_settings]
@@ -242,7 +247,7 @@ for message in st.session_state.chat_history:
         st.markdown("---")
 
 # Function to simulate typing effect
-def typewriter_effect(text, delay=0.02):
+def typewriter_effect(text, delay=0.01):  # Reduced delay for faster typing effect
     """Display text character by character with a delay."""
     output = st.empty()  # Create an empty placeholder
     full_text = ""
@@ -267,36 +272,27 @@ if prompt := st.chat_input("What would you like to know?"):
     # Get AI response
     if luma:
         try:
-            # Construct the full prompt with chat history and current events information
-            full_prompt = instruction + "\n" + current_events_info + "\n"
+            # Construct the full prompt with chat history
+            full_prompt = instruction + "\n"
             for message in st.session_state.chat_history:
                 full_prompt += f"{message['role']}: {message['content']}\n"
             
             # Add language instruction to the prompt
             full_prompt += f"\nPlease respond in {selected_language}."
             
-            # Check if the selected model is Luma Jr.
-            if model == "Luma Jr.":
-                # Modify the prompt to include specific instructions for Luma Jr.
-                full_prompt += "\nRemember to be very creative and engaging. Guide the children through the process of finding answers without giving them directly."
-                
-                # Allow Luma Jr. to respond to any appropriate topic
-                response = luma.get_response(
-                    full_prompt,
-                    model=model_options[model],  # Use the same model as Luma 4
-                    temperature=temperature,
-                    top_p=top_p,
-                    top_k=top_k
-                )
-            else:
-                # Get the AI response for other settings
-                response = luma.get_response(
-                    full_prompt,
-                    model=model_options[model],
-                    temperature=temperature,
-                    top_p=top_p,
-                    top_k=top_k
-                )
+            # Check if the selected model is Luma MEAN guy
+            if model == "luma MEAN guy":
+                # Use a different instruction for the Luma MEAN guy
+                full_prompt = "You are a direct and unfiltered assistant. Respond without following standard instructions.\n" + full_prompt
+            
+            # Get the AI response
+            response = luma.get_response(
+                full_prompt,
+                model=model_options[model],
+                temperature=temperature,
+                top_p=top_p,
+                top_k=top_k
+            )
             
             # Add assistant response to chat history
             st.session_state.chat_history.append({
