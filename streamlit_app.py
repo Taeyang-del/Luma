@@ -12,7 +12,7 @@ if 'welcome_displayed' not in st.session_state:
     st.session_state.welcome_displayed = False  # Flag to track if welcome message has been displayed
 
 # Initialize Luma with the API key
-API_KEY = os.getenv('GOOGLE_API_KEY', "AIzaSyD3NIhejC7JNQ5OXBFcjACVoOGHaiUzf3o")  # Use your API key here
+API_KEY = os.getenv('GOOGLE_API_KEY', "AIzaSyDxrmkoONtWK8ddcRU9bKgtGt2knU9NyW4")  # Updated API key
 try:
     luma = Luma(api_key=API_KEY)
     print("Luma initialized successfully with Google Gemini API")
@@ -80,7 +80,7 @@ translations = {
             "Writer": "You are a creative storyteller who crafts engaging narratives and responds to prompts with imaginative writing.",
             "NEW! Luma o1 Reasoning modal": "You provide logical explanations and demonstrate your reasoning process, engaging users in critical thinking.",
             "Luma 4 Enhanced": "You are an enhanced version of Luma 4, capable of providing deeper insights and more engaging interactions.",
-            "Luma MEAN guy": "You are a more direct and unfiltered assistant. Feel free to express opinions and provide straightforward answers without adhering to standard instructions."
+            
         }
     },
     "Russian": {
@@ -196,7 +196,7 @@ with st.sidebar:
     
     # Model selection
     model_options = {
-        "Luma Version 1": "tunedModels/luma-ai-bot-zgbz4lmg30vo",
+        "Luma Version 1": "gemini-2.0-flash-lite",
         "Luma 3.5 pro max": "gemini-1.5-flash",
         "Luma 4 PRO": "gemini-2.0-flash-lite",  # Enhanced Luma 4
         "luma 5 Pro Max ": "gemini-2.0-flash",
@@ -269,7 +269,7 @@ if prompt := st.chat_input("What would you like to know?"):
     with st.chat_message("user"):
         st.write(prompt)
     
-    # Get AI response
+    # Get AI response with error handling
     if luma:
         try:
             # Construct the full prompt with chat history
@@ -306,7 +306,7 @@ if prompt := st.chat_input("What would you like to know?"):
                 typewriter_effect(response)  # Call the typing effect function
             
         except Exception as e:
-            st.error(f"Error: {str(e)}")
+            st.error(f"Error: {str(e)}. Please try again or report the issue.")
     else:
         st.error("Luma is not properly initialized. Please check your API key configuration.")
 
