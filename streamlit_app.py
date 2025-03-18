@@ -196,7 +196,6 @@ with st.sidebar:
     
     # Model selection
     model_options = {
-        "Luma Version 1": "gemini-2.0-flash-lite",
         "Luma 3.5 pro max": "gemini-1.5-flash",
         "Luma 4 PRO": "gemini-2.0-flash-lite",  # Enhanced Luma 4
         "luma 5 Pro Max ": "gemini-2.0-flash",
