@@ -4,7 +4,6 @@ from luma.core import Luma
 from datetime import datetime
 import time
 import requests
-# from bs4 import BeautifulSoup  # Remove this line
 
 # Initialize session state
 if 'chat_history' not in st.session_state:
