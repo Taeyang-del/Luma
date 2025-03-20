@@ -4,7 +4,7 @@ from luma.core import Luma
 from datetime import datetime
 import time
 import requests
-from bs4 import BeautifulSoup
+# from bs4 import BeautifulSoup  # Remove this line
 
 # Initialize session state
 if 'chat_history' not in st.session_state:
@@ -280,24 +280,13 @@ def typewriter_effect(text, delay=0.01):  # Reduced delay for faster typing effe
         output.markdown(full_text, unsafe_allow_html=True)  # Display the accumulated text
         time.sleep(delay)  # Wait for the specified delay
 
-# Function to scrape a webpage
+# Function to scrape a webpage (if you still want to keep this functionality)
 def scrape_webpage(url):
     try:
         response = requests.get(url)
         response.raise_for_status()  # Raise an error for bad responses
-        soup = BeautifulSoup(response.text, 'html.parser')
-        
-        # Extract the title
-        title = soup.title.string if soup.title else "No title found"
-        
-        # Extract paragraphs
-        paragraphs = soup.find_all('p')
-        content = "\n".join([p.get_text() for p in paragraphs])  # Get all paragraphs
-        
-        # Optionally, summarize the content (simple method)
-        summary = " ".join(content.split()[:50]) + "..."  # Get the first 50 words as a summary
-        
-        return title, content, summary
+        # You can implement your own logic here without BeautifulSoup
+        return "Scraping functionality is not implemented without BeautifulSoup."
     except Exception as e:
         return None, None, str(e)
 
